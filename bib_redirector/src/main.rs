@@ -3,13 +3,18 @@
 use bib_redirector::InfoHelper;
 
 use rocket::response::Redirect;
-use rocket::tokio::time::{sleep, Duration, Instant};
+use rocket::tokio::time::{Duration, Instant};
+
+// use rocket::tokio::time::{sleep, Duration, Instant};
 
 
 #[get("/")]
-async fn index() -> &'static str {
-    sleep(Duration::from_secs(2)).await;
-    "coming: root-response"
+async fn index() -> Redirect {
+
+    Redirect::moved(uri!( "https://www.google.com/" ))
+
+    // sleep(Duration::from_secs(2)).await;
+    // "coming: root-response"
 }
 
 
@@ -27,7 +32,7 @@ async fn info() -> &'static str {
 
 
 #[get("/misc")]
-async fn misc() -> Redirect {
+async fn misc() -> &'static str {
 
     let start = Instant::now();
     // let zz: () = start;  // yields: found struct `std::time::Instant`
@@ -38,9 +43,9 @@ async fn misc() -> Redirect {
 
     println!( "elapsed time;, `{:?}`; about to redirect", elapsed );
 
-    Redirect::to(uri!( "https://google.com" ))
+    // Redirect::to(uri!( "https://google.com" ))
 
-    // "coming: misc-response"
+    "coming: misc-response"
 }
 
 
