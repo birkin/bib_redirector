@@ -1,18 +1,21 @@
 #[macro_use] extern crate rocket;
 
+use bib_redirector::InfoHelper;
+
+use rocket::response::Redirect;
+use rocket::tokio::time::{sleep, Duration, Instant};
+
 
 #[get("/")]
 async fn index() -> &'static str {
-    use rocket::tokio::time::{sleep, Duration};
     sleep(Duration::from_secs(2)).await;
     "coming: root-response"
 }
 
 
+
 #[get("/info")]
 async fn info() -> &'static str {
-
-    use bib_redirector::InfoHelper;
 
     InfoHelper::print_elapsed().await;
 
@@ -23,31 +26,8 @@ async fn info() -> &'static str {
 }
 
 
-// #[get("/misc")]
-// async fn misc() -> &'static str {
-
-//     use rocket::response::Redirect;
-//     use rocket::tokio::time::{sleep, Duration, Instant};
-
-//     let start = Instant::now();
-//     // let zz: () = start;  // yields: found struct `std::time::Instant`
-
-//     // sleep(Duration::from_secs(1)).await;
-//     let elapsed: Duration = start.elapsed();
-//     // let zz: () = elapsed;  // yields: found struct `Duration`
-
-//     println!( "elapsed time;, `{:?}`", elapsed );
-
-//     "coming: misc-response"
-// }
-
-
-use rocket::response::Redirect;
-
 #[get("/misc")]
 async fn misc() -> Redirect {
-
-    use rocket::tokio::time::{Duration, Instant};
 
     let start = Instant::now();
     // let zz: () = start;  // yields: found struct `std::time::Instant`
