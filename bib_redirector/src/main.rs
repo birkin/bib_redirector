@@ -23,10 +23,31 @@ async fn info() -> &'static str {
 }
 
 
-#[get("/misc")]
-async fn misc() -> &'static str {
+// #[get("/misc")]
+// async fn misc() -> &'static str {
 
-    use rocket::tokio::time::{sleep, Duration, Instant};
+//     use rocket::response::Redirect;
+//     use rocket::tokio::time::{sleep, Duration, Instant};
+
+//     let start = Instant::now();
+//     // let zz: () = start;  // yields: found struct `std::time::Instant`
+
+//     // sleep(Duration::from_secs(1)).await;
+//     let elapsed: Duration = start.elapsed();
+//     // let zz: () = elapsed;  // yields: found struct `Duration`
+
+//     println!( "elapsed time;, `{:?}`", elapsed );
+
+//     "coming: misc-response"
+// }
+
+
+use rocket::response::Redirect;
+
+#[get("/misc")]
+async fn misc() -> Redirect {
+
+    use rocket::tokio::time::{Duration, Instant};
 
     let start = Instant::now();
     // let zz: () = start;  // yields: found struct `std::time::Instant`
@@ -35,10 +56,13 @@ async fn misc() -> &'static str {
     let elapsed: Duration = start.elapsed();
     // let zz: () = elapsed;  // yields: found struct `Duration`
 
-    println!( "elapsed time, `{:?}`", elapsed );
+    println!( "elapsed time;, `{:?}`; about to redirect", elapsed );
 
-    "coming: misc-response"
+    Redirect::to(uri!( "https://google.com" ))
+
+    // "coming: misc-response"
 }
+
 
 
 #[launch]
