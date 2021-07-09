@@ -4,19 +4,48 @@ use bib_redirector::InfoHelper;
 
 use rocket::response::Redirect;
 use rocket::tokio::time::{Duration, Instant};
+// use rocket::{Request};
 
 // use rocket::tokio::time::{sleep, Duration, Instant};
 
 
-#[get("/")]
-async fn index() -> Redirect {
+// #[get("/")]
+// async fn index() -> Redirect {
 
-    Redirect::moved(uri!( "https://www.google.com/" ))
+//     Redirect::moved(uri!( "https://www.google.com/" ))
+
+//     // sleep(Duration::from_secs(2)).await;
+//     // "coming: root-response"
+// }
+
+
+#[get("/")]
+async fn root() -> &'static str {
+
+    // Redirect::moved(uri!( "https://www.google.com/" ))
 
     // sleep(Duration::from_secs(2)).await;
-    // "coming: root-response"
+    "coming: root-response redirect to /info"
 }
 
+
+// #[get("/foo/8zjQMdV5YkaBUe/<bibnum>")]
+// async fn redirector() -> Redirect {
+//     println!( "bibnum, ``{:?}``", bibnum);
+
+//     Redirect::moved(uri!( "https://www.google.com/" ))
+
+//     // sleep(Duration::from_secs(2)).await;
+//     // "coming: root-response"
+// }
+
+
+
+#[get("/bib_redirect_tester/<bib>")]
+async fn tester(bib: String) -> Redirect {
+    println!( "the bibnum, ``{:?}``", bib);
+    Redirect::moved(uri!( "https://www.google.com/" ))
+}
 
 
 #[get("/info")]
@@ -53,7 +82,8 @@ async fn misc() -> &'static str {
 #[launch]
 fn rocket() -> _ {
     rocket::build()
-        .mount("/", routes![index])
+        .mount("/", routes![root])
+        .mount("/", routes![tester])
         .mount("/", routes![info])
         .mount("/", routes![misc])
 }
