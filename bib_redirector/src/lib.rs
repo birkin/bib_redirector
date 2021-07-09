@@ -1,4 +1,25 @@
-// #[macro_use] extern crate rocket;
+#[derive(Debug)]
+pub struct RedirectHelper {
+    alma_api_url_template: String,
+
+}
+
+
+    // "https://api-na.hosted.exlibrisgroup.com/almaws/v1/bibs?view=brief&expand=none&other_system_id=THE_BIB-01bu_inst&apikey=THE_API_KEY";
+
+
+impl RedirectHelper {
+
+    pub async fn new( bib: &str ) -> RedirectHelper {
+        // let zz: () = bib;
+        println!("bib, ``{:?}``", bib);
+        let alma_api_url_template = String::from("foo_url");
+        // let zz: () = alma_api_url_template;
+        RedirectHelper { alma_api_url_template }
+    }
+
+}
+
 
 
 #[derive(Debug)]

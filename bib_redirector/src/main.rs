@@ -1,6 +1,7 @@
 #[macro_use] extern crate rocket;
 
 use bib_redirector::InfoHelper;
+use bib_redirector::RedirectHelper;
 
 use rocket::response::Redirect;
 use rocket::tokio::time::{Duration, Instant};
@@ -29,22 +30,13 @@ async fn root() -> &'static str {
 }
 
 
-// #[get("/foo/8zjQMdV5YkaBUe/<bibnum>")]
-// async fn redirector() -> Redirect {
-//     println!( "bibnum, ``{:?}``", bibnum);
-
-//     Redirect::moved(uri!( "https://www.google.com/" ))
-
-//     // sleep(Duration::from_secs(2)).await;
-//     // "coming: root-response"
-// }
-
-
-
 #[get("/bib_redirect_tester/<bib>")]
 async fn tester(bib: String) -> Redirect {
     println!( "the bibnum, ``{:?}``", bib);
-    Redirect::moved(uri!( "https://www.google.com/" ))
+    let redirector = RedirectHelper::new( &bib ).await;
+    // Redirect::moved(uri!( "https://www.google.com/" ))
+    Redirect::temporary(uri!( "https://www.google.com/" )) // useful for testing, so browser doesn't cache it
+
 }
 
 
