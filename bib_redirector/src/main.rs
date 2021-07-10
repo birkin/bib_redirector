@@ -19,9 +19,13 @@ async fn root() -> &'static str {
 async fn tester(bib: String) -> Redirect {
 
     // -- setup
-    println!( "the bibnum, ``{:?}``", bib);
+    println!( "perceived bibnum, ``{:?}``", bib);
     let redirector = RedirectHelper::new( &bib ).await;  // creates `alma_api_url`
     print!("alma-api-url, ``{:?}``", redirector.alma_api_url);
+
+    // -- add check-digit
+    let updated_bib: String = redirector.add_check_digit( &bib ).await;
+    println!( "updated_bibnum, ``{:?}``", updated_bib );
 
     // -- hit api
     let data = redirector.hit_alma_api().await;
