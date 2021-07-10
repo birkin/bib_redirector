@@ -8,7 +8,7 @@ pub struct RedirectHelper {
     pub perceived_bib: String,
     pub alma_api_url_template: String,
     pub alma_api_url: String,
-    pub alma_redirect_url: String,
+    pub alma_item_url: String,
     api_key: String
 }
 
@@ -22,7 +22,7 @@ impl RedirectHelper {
         let perceived_bib = bib.to_string();
         let alma_api_url_template = "https://api-na.hosted.exlibrisgroup.com/almaws/v1/bibs?view=brief&expand=none&other_system_id=THE_BIB-01bu_inst&apikey=THE_API_KEY".to_string();
         let alma_api_url = "".to_string();
-        let alma_redirect_url = "".to_string();
+        let alma_item_url = "".to_string();
         let api_key: Result<String, VarError> = env::var("BIB_REDIRECT_TEST__ALMA_API_KEY");
         match api_key {
             Ok(_) => {},
@@ -32,7 +32,7 @@ impl RedirectHelper {
             }
         };
         let api_key: String = api_key.unwrap();  // this is ok because any error is handled above
-        RedirectHelper { perceived_bib, alma_api_url_template, alma_api_url, alma_redirect_url, api_key }
+        RedirectHelper { perceived_bib, alma_api_url_template, alma_api_url, alma_item_url, api_key }
     }
 
 
@@ -65,7 +65,9 @@ impl RedirectHelper {
     // }
 
     pub async fn add_check_digit( &self, bib: &str ) -> String {
-        println!( "initial bib, ``{:?}``", bib );
+        println!( "incoming bib, ``{:?}``", bib );
+        let initial_bib: String = bib.to_string();
+        println!( "initial_bib, ``{:?}``", initial_bib );
         "foo".to_string()
     }
 
@@ -133,4 +135,24 @@ impl InfoHelper {
 
         println!( "elapsed time, `{:?}`", elapsed );
     }
+}
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;  // gives access to RedirectHelper struct
+
+    #[test]
+    fn it_works() {
+        assert_eq!(2 + 2, 4);
+    }
+
+    // #[test]
+    #[rocket::async_test]  // figured this out from <https://blog.x5ff.xyz/blog/async-tests-tokio-rust/>, and then looking at <https://github.com/SergioBenitez/Rocket/blob/677790d6397147f83066a284ee962bc174c555b5/examples/testing/src/async_required.rs#L25>
+    async fn bib_is_stored() {
+        let redirector = RedirectHelper::new( "b1234567" );
+        assert_eq!( "b1234567", redirector.await.perceived_bib );
+    }
+
+
 }
