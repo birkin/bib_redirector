@@ -147,8 +147,10 @@ mod tests {
     // #[test]
     #[rocket::async_test]  // figured this out from <https://blog.x5ff.xyz/blog/async-tests-tokio-rust/>, and then looking at <https://github.com/SergioBenitez/Rocket/blob/677790d6397147f83066a284ee962bc174c555b5/examples/testing/src/async_required.rs#L25>
     async fn test_redirector_new_for_stored_bib() {
-        let redirector = RedirectHelper::new( "b1234567" );
-        assert_eq!( "b1234567".to_string(), redirector.await.perceived_bib );
+        // let redirector = RedirectHelper::new( "b1234567" );
+        // assert_eq!( "b1234567".to_string(), redirector.await.perceived_bib );
+        let redirector = RedirectHelper::new( "b1234567" ).await;
+        assert_eq!( "b1234567".to_string(), redirector.perceived_bib );
     }
 
     // #[test]
