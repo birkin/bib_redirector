@@ -90,8 +90,11 @@ impl RedirectHelper {
         let initial_bib: String = bib.to_string();
         // -- remove `b`
         let count: u8 = *&initial_bib.chars().count() as u8;  // need to de-reference to cast as u8
-        let mut result = "".to_string();
-        let mut check_digit: String = "".to_string();
+        // let mut result = "".to_string();
+        // let mut result: String;
+        let result: String;
+        // let mut check_digit: String = "".to_string();
+        let check_digit: String;
         println!( "count, ``{:?}``", count );
         if count != 8 {
             result = "bad_size".to_string();
@@ -121,7 +124,7 @@ impl RedirectHelper {
                 println!( "---" );
                 index += 1;
             }
-            let check_digit_num: u8 = ( total % 11 );
+            let check_digit_num: u8 = total % 11;
             println!( "check_digit_num, ``{:?}``", check_digit_num );
             if check_digit_num != 10 {
                 check_digit = check_digit_num.to_string();
