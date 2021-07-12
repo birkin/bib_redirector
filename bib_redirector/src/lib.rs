@@ -70,9 +70,7 @@ impl RedirectHelper {
         let result: String;
         let check_digit: String;
         println!( "count, ``{:?}``", count );
-        if count != 8 {
-            result = "bad_size".to_string();
-        } else {
+        if count == 8 {
             let target_segment: String = initial_bib[1..8].to_string();
             println!( "target_segment, ``{:?}``", target_segment );
             // -- reverse string ----------------------------------------------
@@ -107,10 +105,11 @@ impl RedirectHelper {
             let updated_bib: String = format!( "{}{}", initial_bib, check_digit );
             println!( "updated_bib, ``{:?}``", updated_bib );
             result = updated_bib;
+        } else {
+            result = "bad_size".to_string();
         }
         result
     }
-
 
 
     pub async fn hit_alma_api( &self ) -> Result< (), Box<dyn std::error::Error> > {
