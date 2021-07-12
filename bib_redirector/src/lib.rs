@@ -133,7 +133,8 @@ impl RedirectHelper {
             }
             println!( "check_digit, ``{:?}``", check_digit );
             // -- reconstitute full bib with `b` and check-digit
-            let updated_bib: String = format!( "b{}{}", target_segment, check_digit );
+            // let updated_bib: String = format!( "b{}{}", target_segment, check_digit );
+            let updated_bib: String = format!( "{}{}", initial_bib, check_digit );
             println!( "updated_bib, ``{:?}``", updated_bib );
             result = updated_bib;
         }
