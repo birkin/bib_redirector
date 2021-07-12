@@ -144,30 +144,24 @@ mod tests {
         assert_eq!(2 + 2, 4);
     }
 
-    // #[test]
     #[rocket::async_test]  // figured this out from <https://blog.x5ff.xyz/blog/async-tests-tokio-rust/>, and then looking at <https://github.com/SergioBenitez/Rocket/blob/677790d6397147f83066a284ee962bc174c555b5/examples/testing/src/async_required.rs#L25>
     async fn test_redirector_new_for_stored_bib() {
-        // let redirector = RedirectHelper::new( "b1234567" );
-        // assert_eq!( "b1234567".to_string(), redirector.await.perceived_bib );
         let redirector = RedirectHelper::new( "b1234567" ).await;
         assert_eq!( "b1234567".to_string(), redirector.perceived_bib );
     }
 
-    // #[test]
     #[rocket::async_test]
-    async fn test_add_check_digit() {
-        let redirector = RedirectHelper::new( "b1234567" ).await;
-        // let start_bib: String = redirector.await.perceived_bib;
-        // let updated_bib: String = redirector.await.add_check_digit(&start_bib).await;
+    async fn test_add_check_digit_regular() {
+        let redirector = RedirectHelper::new( "b1049798" ).await;
         let updated_bib: String = redirector.add_check_digit(&redirector.perceived_bib).await;
-        assert_eq!( "foo".to_string(), updated_bib );
+        assert_eq!( "b10497985".to_string(), updated_bib );
     }
 
-    // #[rocket::async_test]
-    // async fn test_add_check_digit() -> String {
-    //     let redirector = RedirectHelper::new( "b1234567" );
-    //     let start_bib = redirector.await.perceived_bib.as_str();
-    //     assert_eq!( "foo", redirector.await.add_check_digit(start_bib) );
-    // }
+    #[rocket::async_test]
+    async fn test_add_check_digit_x() {
+        let redirector = RedirectHelper::new( "b1102947" ).await;
+        let updated_bib: String = redirector.add_check_digit(&redirector.perceived_bib).await;
+        assert_eq!( "b1102947x".to_string(), updated_bib );
+    }
 
 }
