@@ -20,7 +20,7 @@ async fn tester(bib: String) -> Redirect {
 
     // -- setup
     println!( "perceived bibnum, ``{:?}``", bib);
-    let redirector = RedirectHelper::new( &bib ).await;  // creates `alma_api_url`
+    let redirector = RedirectHelper::new( &bib ).await;
     print!("alma-api-url, ``{:?}``", redirector.alma_api_url);
 
     // -- add check-digit

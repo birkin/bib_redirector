@@ -13,9 +13,6 @@ pub struct RedirectHelper {
 }
 
 
-    // "https://api-na.hosted.exlibrisgroup.com/almaws/v1/bibs?view=brief&expand=none&other_system_id=THE_BIB-01bu_inst&apikey=THE_API_KEY";
-
-
 impl RedirectHelper {
 
     pub async fn new( bib: &str ) -> RedirectHelper {
@@ -68,7 +65,7 @@ impl RedirectHelper {
         println!( "incoming bib, ``{:?}``", bib );
         let initial_bib: String = bib.to_string();
         println!( "initial_bib, ``{:?}``", initial_bib );
-        "foo".to_string()
+        "fooz".to_string()
     }
 
 
@@ -149,10 +146,26 @@ mod tests {
 
     // #[test]
     #[rocket::async_test]  // figured this out from <https://blog.x5ff.xyz/blog/async-tests-tokio-rust/>, and then looking at <https://github.com/SergioBenitez/Rocket/blob/677790d6397147f83066a284ee962bc174c555b5/examples/testing/src/async_required.rs#L25>
-    async fn bib_is_stored() {
+    async fn test_redirector_new_for_stored_bib() {
         let redirector = RedirectHelper::new( "b1234567" );
-        assert_eq!( "b1234567", redirector.await.perceived_bib );
+        assert_eq!( "b1234567".to_string(), redirector.await.perceived_bib );
     }
 
+    // #[test]
+    #[rocket::async_test]
+    async fn test_add_check_digit() {
+        let redirector = RedirectHelper::new( "b1234567" ).await;
+        // let start_bib: String = redirector.await.perceived_bib;
+        // let updated_bib: String = redirector.await.add_check_digit(&start_bib).await;
+        let updated_bib: String = redirector.add_check_digit(&redirector.perceived_bib).await;
+        assert_eq!( "foo".to_string(), updated_bib );
+    }
+
+    // #[rocket::async_test]
+    // async fn test_add_check_digit() -> String {
+    //     let redirector = RedirectHelper::new( "b1234567" );
+    //     let start_bib = redirector.await.perceived_bib.as_str();
+    //     assert_eq!( "foo", redirector.await.add_check_digit(start_bib) );
+    // }
 
 }
