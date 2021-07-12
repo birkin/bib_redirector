@@ -61,39 +61,13 @@ impl RedirectHelper {
     //     RedirectHelper { alma_api_url, alma_redirect_url }
     // }
 
-
-
-    // pub async fn add_check_digit( &self, bib: &str ) -> String {
-    //     // -- <https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html>
-    //     println!( "incoming bib, ``{:?}``", bib );
-    //     let initial_bib: String = bib.to_string();
-    //     // -- remove `b`
-    //     let count: u8 = *&initial_bib.chars().count() as u8;  // need to de-reference to cast as u8
-    //     println!( "count, ``{:?}``", count );
-    //     if count != 8 {
-    //         "bad_size".to_string()
-    //     } else {
-    //         let target_segment: String = initial_bib[1..8].to_string();
-    //         println!( "target_segment, ``{:?}``", target_segment );
-    //         // -- process remainder
-    //         // -- reconstitute full bib with `b` and check-digit
-    //         "fooz".to_string()
-
-    //     }
-
-    // }
-
-
     pub async fn add_check_digit( &self, bib: &str ) -> String {
         // -- note, this code assumes ascii strings, see <https://doc.rust-lang.org/book/ch08-02-strings.html#bytes-and-scalar-values-and-grapheme-clusters-oh-my> for why that's important
         println!( "incoming bib, ``{:?}``", bib );
         let initial_bib: String = bib.to_string();
         // -- remove `b`
         let count: u8 = *&initial_bib.chars().count() as u8;  // need to de-reference to cast as u8
-        // let mut result = "".to_string();
-        // let mut result: String;
         let result: String;
-        // let mut check_digit: String = "".to_string();
         let check_digit: String;
         println!( "count, ``{:?}``", count );
         if count != 8 {
@@ -101,11 +75,10 @@ impl RedirectHelper {
         } else {
             let target_segment: String = initial_bib[1..8].to_string();
             println!( "target_segment, ``{:?}``", target_segment );
-            // -- process remainder
-            // -- reverse string
+            // -- reverse string ----------------------------------------------
             let reversed: String = target_segment.chars().rev().collect();
             println!( "reversed, ``{:?}``", reversed );
-            // -- iterate through reversed string
+            // -- iterate through reversed string -----------------------------
             let mut index: u8 = 1;
             let mut total: u8 = 0;
             for chr in reversed.chars() {
@@ -113,8 +86,6 @@ impl RedirectHelper {
                 let chr_to_int: u8 = chr.to_digit(10).unwrap() as u8;  // the `10` is for base-10; defaults to u32, so I'm casting it to u8
                 println!( "chr_to_int, ``{:?}``", chr_to_int );
                 println!( "index, ``{:?}``", index);
-                // let chr_to_int: u8 = chr.parse().unwrap();
-                // let chr_to_int: u8 = chr as u8;
                 let multiplier: u8 = index + 1;
                 println!( "multiplier (index + 1), ``{:?}``", multiplier );
                 let multiplied: u8 = chr_to_int * multiplier;
@@ -132,8 +103,7 @@ impl RedirectHelper {
                 check_digit = "x". to_string();
             }
             println!( "check_digit, ``{:?}``", check_digit );
-            // -- reconstitute full bib with `b` and check-digit
-            // let updated_bib: String = format!( "b{}{}", target_segment, check_digit );
+            // -- reconstitute full bib with `b` and check-digit --------------
             let updated_bib: String = format!( "{}{}", initial_bib, check_digit );
             println!( "updated_bib, ``{:?}``", updated_bib );
             result = updated_bib;
