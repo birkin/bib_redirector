@@ -32,35 +32,6 @@ impl RedirectHelper {
         RedirectHelper { perceived_bib, alma_api_url_template, alma_api_url, alma_item_url, api_key }
     }
 
-
-    // pub async fn new( bib: &str ) -> RedirectHelper {
-
-    //     // -- incorporate bib into url-template
-    //     println!("bib in helper, ``{:?}``", bib);
-    //     let alma_api_url_template: String = String::from("https://api-na.hosted.exlibrisgroup.com/almaws/v1/bibs?view=brief&expand=none&other_system_id=THE_BIB-01bu_inst&apikey=THE_API_KEY");
-    //     println!("alma_api_url_template, ``{:?}``", alma_api_url_template);
-    //     let url_with_bib: String = str::replace( &alma_api_url_template, "THE_BIB", bib );
-    //     println!("url_with_bib, ``{:?}``", url_with_bib);
-
-    //     // -- incorporate api-key into url-template
-    //     // let api_key = env::var( "BIB_REDIRECT_TEST__ALMA_API_KEY" );  // returns Result
-    //     let api_key: Result<String, VarError> = env::var("BIB_REDIRECT_TEST__ALMA_API_KEY");
-    //     match api_key {
-    //         Ok(_) => {},
-    //         Err(_err) => {
-    //             println!("api-key envar not found; quitting");
-    //             std::process::exit(-1);
-    //         }
-    //     };
-    //     let api_key: String = api_key.unwrap();  // this is ok because the error is handled above
-    //     println!("api_key, ``{:?}``", api_key);
-    //     let url_with_key: String = str::replace( &url_with_bib, "THE_API_KEY", &api_key );
-    //     let alma_api_url: String = url_with_key;
-    //     let alma_redirect_url: String = "".to_string();
-
-    //     RedirectHelper { alma_api_url, alma_redirect_url }
-    // }
-
     pub async fn add_check_digit( &self, bib: &str ) -> String {
         // -- note, this code assumes ascii strings, see <https://doc.rust-lang.org/book/ch08-02-strings.html#bytes-and-scalar-values-and-grapheme-clusters-oh-my> for why that's important
         println!( "incoming bib, ``{:?}``", bib );
@@ -111,27 +82,18 @@ impl RedirectHelper {
         result
     }
 
+    pub async fn build_api_url( &self, updated_bib: &str ) -> String {
+        let url_with_key: String = str::replace( &self.alma_api_url_template, "THE_API_KEY", &self.api_key );
+        let api_url: String = str::replace( &url_with_key, "THE_BIB", &updated_bib );
+        println!( "api_url, ``{:?}``", api_url );
+        api_url
+    }
 
-    pub async fn hit_alma_api( &self ) -> Result< (), Box<dyn std::error::Error> > {
+    pub async fn hit_alma_api( &self, api_url: &str ) -> Result< (), Box<dyn std::error::Error> > {
 
-        let client = reqwest::Client::builder().build()?;  // <https://dev.to/pintuch/rust-reqwest-examples-10ff>
-
-
-        let res = client
-            .get("https://httpbin.org/ip")
-            .send()
-            .await?;
-        // let ip = res
-        //     .json::<HashMap<String, String>>()
-        //     .await?;
-        // println!( "ip, ``{:?}``", ip );
-
-        let res_txt: String = res.text().await?;
-        println!( "res_txt, ``{:?}``", res_txt);
-
-
-        let resp = client
-            .get( &self.alma_api_url )
+        let client: reqwest::Client = reqwest::Client::builder().build()?;  // <https://dev.to/pintuch/rust-reqwest-examples-10ff>
+        let resp: reqwest::Response = client
+            .get( api_url )
             .header( "accept", "application/json" )
             .send()
             .await?;
@@ -141,9 +103,9 @@ impl RedirectHelper {
         // println!("resp, ``{:#?}``", resp);
         // println!( "resp.text(), ``{:#?}``", resp.text().await? );
 
-        let rsp_txt: String = resp.text().await?;
+        let resp_txt: String = resp.text().await?;
         // let zz: () = rsp_txt;
-        println!( "rsp_txt, ``{:?}``", rsp_txt);
+        println!( "resp_txt, ``{:?}``", resp_txt);
 
         // println!( "resp.json, ``{:#?}``", resp.json::<HashMap<String, String>>().await? );  // doesn't work
 
@@ -182,10 +144,10 @@ impl InfoHelper {
 mod tests {
     use super::*;  // gives access to RedirectHelper struct
 
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
+    // #[test]
+    // fn test_it_works() {
+    //     assert_eq!(2 + 2, 4);
+    // }
 
     #[rocket::async_test]  // figured this out from <https://blog.x5ff.xyz/blog/async-tests-tokio-rust/>, and then looking at <https://github.com/SergioBenitez/Rocket/blob/677790d6397147f83066a284ee962bc174c555b5/examples/testing/src/async_required.rs#L25>
     async fn test_redirector_new_for_stored_bib() {
@@ -215,3 +177,35 @@ mod tests {
     }
 
 }
+
+
+
+
+
+    // pub async fn new( bib: &str ) -> RedirectHelper {
+
+    //     // -- incorporate bib into url-template
+    //     println!("bib in helper, ``{:?}``", bib);
+    //     let alma_api_url_template: String = String::from("https://api-na.hosted.exlibrisgroup.com/almaws/v1/bibs?view=brief&expand=none&other_system_id=THE_BIB-01bu_inst&apikey=THE_API_KEY");
+    //     println!("alma_api_url_template, ``{:?}``", alma_api_url_template);
+    //     let url_with_bib: String = str::replace( &alma_api_url_template, "THE_BIB", bib );
+    //     println!("url_with_bib, ``{:?}``", url_with_bib);
+
+    //     // -- incorporate api-key into url-template
+    //     // let api_key = env::var( "BIB_REDIRECT_TEST__ALMA_API_KEY" );  // returns Result
+    //     let api_key: Result<String, VarError> = env::var("BIB_REDIRECT_TEST__ALMA_API_KEY");
+    //     match api_key {
+    //         Ok(_) => {},
+    //         Err(_err) => {
+    //             println!("api-key envar not found; quitting");
+    //             std::process::exit(-1);
+    //         }
+    //     };
+    //     let api_key: String = api_key.unwrap();  // this is ok because the error is handled above
+    //     println!("api_key, ``{:?}``", api_key);
+    //     let url_with_key: String = str::replace( &url_with_bib, "THE_API_KEY", &api_key );
+    //     let alma_api_url: String = url_with_key;
+    //     let alma_redirect_url: String = "".to_string();
+
+    //     RedirectHelper { alma_api_url, alma_redirect_url }
+    // }
