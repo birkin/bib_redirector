@@ -27,8 +27,12 @@ async fn tester(bib: String) -> Redirect {
     let updated_bib: String = redirector.add_check_digit( &bib ).await;
     println!( "updated_bibnum, ``{:?}``", updated_bib );
 
+    // -- build api-url
+    let url: String = redirector.build_api_url( &updated_bib ).await;
+    println!( "api-url, ``{:?}``", url );
+
     // -- hit api
-    let data = redirector.hit_alma_api().await;
+    let data = redirector.hit_alma_api( &url ).await;
     match data {
         Ok(_) => {},
         Err(_err) => {
@@ -39,6 +43,9 @@ async fn tester(bib: String) -> Redirect {
     };
 
 
+    // -- build redirect url
+
+    // -- redirect
     // Redirect::moved(uri!( "https://www.google.com/" ))
     Redirect::temporary(uri!( "https://www.google.com/" )) // useful for testing, so browser doesn't cache it
 
