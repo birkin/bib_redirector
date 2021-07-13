@@ -1,6 +1,9 @@
-// use std::collections::HashMap;
+use std::collections::HashMap;
 use std::env;
 use std::env::VarError;
+use std::error::Error;
+use serde;
+// use rocket::serde;
 
 
 #[derive(Debug)]
@@ -90,21 +93,33 @@ impl RedirectHelper {
     }
 
     pub async fn hit_alma_api( &self, api_url: &str ) -> Result< (), Box<dyn std::error::Error> > {
+        println!("starting hit_alma_api()");
 
         let client: reqwest::Client = reqwest::Client::builder().build()?;  // <https://dev.to/pintuch/rust-reqwest-examples-10ff>
+        println!("client instantiated");
+
+        // println!("about to get resp");
+        // let resp: reqwest::Response = client
+        //     .get( api_url )
+        //     .header( "accept", "application/json" )
+        //     .send()
+        //     .json::<serde_json::Value>()
+        //     .await?;
+
+        println!("about to get resp");
         let resp: reqwest::Response = client
             .get( api_url )
             .header( "accept", "application/json" )
             .send()
             .await?;
-            // .json::<HashMap<String, String>>()
-            // .await?;
+        println!("resp perceived");  // works -- but no json
 
-        // println!("resp, ``{:#?}``", resp);
-        // println!( "resp.text(), ``{:#?}``", resp.text().await? );
+        // -- fails -- from <https://rust-lang-nursery.github.io/rust-cookbook/web/clients/apis.html>
+        // println!("about to load json");
+        // let jdct = resp.json().await?;  // yields: thread 'tests::test_hit_alma_api' panicked at 'called `Result::unwrap()` on an `Err` value: reqwest::Error { kind: Decode, source: Error("invalid type: map, expected unit", line: 1, column: 0) }'
+        // println!( "jdct, ``{:?}``", jdct );
 
         let resp_txt: String = resp.text().await?;
-        // let zz: () = rsp_txt;
         println!( "resp_txt, ``{:?}``", resp_txt);
 
         // println!( "resp.json, ``{:#?}``", resp.json::<HashMap<String, String>>().await? );  // doesn't work
@@ -174,6 +189,17 @@ mod tests {
         let redirector = RedirectHelper::new( "b10" ).await;
         let updated_bib: String = redirector.add_check_digit(&redirector.perceived_bib).await;
         assert_eq!( "bad_size".to_string(), updated_bib );
+    }
+
+    #[rocket::async_test]
+    async fn test_hit_alma_api() {
+        let test_url_try: Result<String, VarError> = env::var("BIB_REDIRECT_TEST__ALMA_API_FULL_URL");
+        let test_url: String = test_url_try.unwrap();
+        let redirector = RedirectHelper::new( "foo" ).await;
+        let updated_bib_try: Result< (), Box<dyn std::error::Error> > = redirector.hit_alma_api(&test_url).await;
+        let updated_bib = updated_bib_try.unwrap();
+        // let zz: () = updated_bib;
+        assert_eq!( 2, 3 );
     }
 
 }
