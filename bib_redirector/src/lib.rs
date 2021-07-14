@@ -252,22 +252,25 @@ mod tests {
     #[rocket::async_test]
     async fn test_simple_api_call_example() {
         let test_url: String = "https://httpbin.org/ip".to_string();
-        // let rslt: Result< (), Box<dyn std::error::Error> > = simple_api_call_example( &test_url ).await;
-        // let z: () = rslt;  // yields: found enum `Result`
-        let rslt: Result< HashMap<String, String>, Box<dyn std::error::Error> > = simple_api_call_example( &test_url ).await;
-
-        match rslt {
-            Ok(_) => {},
-            // Ok(_) => "Success!".to_string(),
+        let rslt_try: Result< HashMap<String, String>, Box<dyn std::error::Error> > = simple_api_call_example( &test_url ).await;
+        // let z: () = rslt_try;  // yields: found enum `Result`
+        match rslt_try {
+            Ok(_) => {
+                println!( "all ok!" );
+            },
             Err(_err) => {
                 println!( "the error, ``{:?}``", _err );
                 std::process::exit(-1);
             }
         };
-        println!( "rslt, ``{:?}``", rslt );
-        // let output: String = rslt.unwrap();  // this is ok because any error is handled above
-        // println!( "output, ``{:?}``", output );
-        assert_eq!(2 + 2, 5);
+        println!( "rslt_try, ``{:?}``", rslt_try );
+        let output_map: HashMap<String, String> = rslt_try.unwrap();  // this is ok because any error is handled above
+        // let zz: () = output_map;  // yields: found struct `std::collections::HashMap`
+        println!( "output_map, ``{:?}``", output_map );
+        let tst = output_map.contains_key("foo");
+        // let z: () = tst;  // yields: found `bool`
+        assert_eq!( output_map.contains_key("foo"), false );
+        assert_eq!( output_map.contains_key("origin"), true );
     }
 
     // #[rocket::async_test]
