@@ -32,15 +32,15 @@ async fn tester(bib: String) -> Redirect {
     println!( "api-url, ``{:?}``", url );
 
     // -- hit api
-    let data = redirector.hit_alma_api( &url ).await;
-    match data {
-        Ok(_) => {},
-        Err(_err) => {
-            // println!("problem hitting alma-api; quitting");
-            println!( "problem hitting alma-api, ``{:?}``; quitting", _err);
-            std::process::exit(-1);
-        }
-    };
+    // let data = redirector.hit_alma_api( &url ).await;
+    // match data {
+    //     Ok(_) => {},
+    //     Err(_err) => {
+    //         // println!("problem hitting alma-api; quitting");
+    //         println!( "problem hitting alma-api, ``{:?}``; quitting", _err);
+    //         std::process::exit(-1);
+    //     }
+    // };
 
 
     // -- build redirect url
