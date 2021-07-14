@@ -171,6 +171,24 @@ impl RedirectHelper {
 
 }
 
+// -- end RedirectHelper()
+
+
+// -- temp experimentation
+
+use std::collections::HashMap;
+async fn simple_api_call_example( api_url: &str ) -> Result< HashMap<String, String>, Box<dyn std::error::Error> > {
+    // let resp = reqwest::get("https://httpbin.org/ip")
+    let resp = reqwest::get( api_url )
+        .await?
+        .json::<HashMap<String, String>>()
+        .await?;
+    // let zz: () = resp; // yields: found struct `HashMap`
+    println!( "resp, ``{:#?}``", resp );
+    // Ok(())
+    Ok( resp )
+}
+
 
 
 #[derive(Debug)]
@@ -229,6 +247,27 @@ mod tests {
         let redirector = RedirectHelper::new( "b10" ).await;
         let updated_bib: String = redirector.add_check_digit(&redirector.perceived_bib).await;
         assert_eq!( "bad_size".to_string(), updated_bib );
+    }
+
+    #[rocket::async_test]
+    async fn test_simple_api_call_example() {
+        let test_url: String = "https://httpbin.org/ip".to_string();
+        // let rslt: Result< (), Box<dyn std::error::Error> > = simple_api_call_example( &test_url ).await;
+        // let z: () = rslt;  // yields: found enum `Result`
+        let rslt: Result< HashMap<String, String>, Box<dyn std::error::Error> > = simple_api_call_example( &test_url ).await;
+
+        match rslt {
+            Ok(_) => {},
+            // Ok(_) => "Success!".to_string(),
+            Err(_err) => {
+                println!( "the error, ``{:?}``", _err );
+                std::process::exit(-1);
+            }
+        };
+        println!( "rslt, ``{:?}``", rslt );
+        // let output: String = rslt.unwrap();  // this is ok because any error is handled above
+        // println!( "output, ``{:?}``", output );
+        assert_eq!(2 + 2, 5);
     }
 
     // #[rocket::async_test]
