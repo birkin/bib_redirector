@@ -119,7 +119,24 @@ impl RedirectHelper {
             .unwrap();
         println!( "resp_text, ``{:?}``", resp_text );
 
-        // let resp_json: serde_json::Value = serde_json::from_str( &resp_text ).unwrap();
+
+        // let resp_json: HashMap<String, HashMap<String,Value>> = serde_json::from_str( &resp_text ).unwrap();
+        // println!( "resp_json, {:?}", resp_json );
+
+        // println!( "\n---\nabout to run loop..." );
+        // for ( key, value ) in resp_json {
+        //     println!( "key, {:?}", key );
+        //     println!( "value, {:?}", value);
+        //     if key == "bib" {
+        //         for (inner_key, inner_value) in value {
+        //             println!( "- inner_key, ``{:?}``", inner_key );
+        //             println!( "- inner_value, ``{:?}``", inner_value );
+        //         }
+
+        //     }
+        // }
+
+
         let resp_json: HashMap<String, Value> = serde_json::from_str( &resp_text ).unwrap();
         println!( "resp_json, {:?}", resp_json );
 
@@ -127,8 +144,13 @@ impl RedirectHelper {
         for ( key, value ) in resp_json {
             println!( "key, {:?}", key );
             println!( "value, {:?}", value);
+            // let zz: () = value;  // yields: found enum `serde_json::Value`
             if key == "bib" {
                 println!( "\nok -- pay attention! ");
+                let target_array = value.get(0).unwrap();
+                println!( "target_array, ``{:?}``", target_array );
+                let mms_id: String = target_array.get("mms_id").unwrap().to_string();
+                println!( "mms_id, ``{:?}``", mms_id );
                 // for entry in value {
                 //     println!( "entry, {:?}", entry );
                 // }
