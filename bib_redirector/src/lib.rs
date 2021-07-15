@@ -1,10 +1,12 @@
-// use std::collections::HashMap;
-use std::env;
-use std::env::VarError;
-// use std::error::Error;
-
-// use serde;
 // use rocket::serde;
+// use serde;
+// use std::collections::HashMap;
+// use std::error::Error;
+use rocket::tokio::time::{sleep, Duration, Instant};
+use serde_json::value::Value;
+use std::collections::HashMap;
+use std::env::VarError;
+use std::env;
 
 
 #[derive(Debug)]
@@ -94,6 +96,51 @@ impl RedirectHelper {
     }
 
 
+    pub async fn hit_alma_api( &self, api_url: &str ) -> String {
+        println!( "starting hit_alma_api()" );
+        println!( "api_url, ``{:?}``", api_url );
+
+        let client: reqwest::Client = reqwest::Client::builder()
+            .timeout( rocket::tokio::time::Duration::from_millis(1000) )
+            .timeout( Duration::from_secs(10) )
+            .build()
+            .unwrap();  // <https://dev.to/pintuch/rust-reqwest-examples-10ff>
+        println!("client instantiated");
+
+        println!("about to get resp");
+        let resp_text: String = client
+            .get( api_url )
+            .header( "accept", "application/json" )
+            .send()
+            .await
+            .unwrap()
+            .text()
+            .await
+            .unwrap();
+        println!( "resp_text, ``{:?}``", resp_text );
+
+        // let resp_json: serde_json::Value = serde_json::from_str( &resp_text ).unwrap();
+        let resp_json: HashMap<String, Value> = serde_json::from_str( &resp_text ).unwrap();
+        println!( "resp_json, {:?}", resp_json );
+
+        println!( "\n---\nabout to run loop..." );
+        for ( key, value ) in resp_json {
+            println!( "key, {:?}", key );
+            println!( "value, {:?}", value);
+            if key == "bib" {
+                println!( "\nok -- pay attention! ");
+                // for entry in value {
+                //     println!( "entry, {:?}", entry );
+                // }
+            } else {
+                println!( "\nno, bib not yet found" );
+            }
+        }
+
+        "foo".to_string()
+    }
+
+
     // pub async fn hit_alma_api( &self, api_url: &str ) -> Result< (), Box<dyn std::error::Error> > {
     //     println!( "starting hit_alma_api()" );
     //     println!( "api_url, ``{:?}``", api_url );
@@ -174,21 +221,46 @@ impl RedirectHelper {
 // -- end RedirectHelper()
 
 
-// -- temp experimentation
+// -- temp experimentation -- works
 
-use std::collections::HashMap;
-async fn simple_api_call_example( api_url: &str ) -> Result< HashMap<String, String>, Box<dyn std::error::Error> > {
-    // let resp = reqwest::get("https://httpbin.org/ip")
-    let resp = reqwest::get( api_url )
-        .await?
-        .json::<HashMap<String, String>>()
-        .await?;
-    // let zz: () = resp; // yields: found struct `HashMap`
-    println!( "resp, ``{:#?}``", resp );
-    // Ok(())
-    Ok( resp )
-}
 
+// use std::collections::HashMap;
+// async fn simple_api_call_example( api_url: &str ) -> Result< HashMap<String, String>, Box<dyn std::error::Error> > {
+//     // let resp = reqwest::get("https://httpbin.org/ip")
+//     let resp = reqwest::get( api_url )
+//         .await?
+//         .json::<HashMap<String, String>>()
+//         .await?;
+//     // let zz: () = resp; // yields: found struct `HashMap`
+//     println!( "resp, ``{:#?}``", resp );
+//     Ok( resp )
+// }
+
+
+// use std::collections::HashMap;
+// use serde_json::value::Value;
+// async fn simple_api_call_unknown_json_format_example( api_url: &str ) -> String {
+//     // let resp = reqwest::get("https://httpbin.org/ip")
+//     let resp_txt = reqwest::get( api_url )
+//         .await
+//         .unwrap()
+//         .text()
+//         .await
+//         .unwrap();
+//     // let zz: () = resp_txt; // yields: found struct `std::string::String`
+//     println!( "resp_txt, ``{:#?}``", resp_txt );  // yields: resp_txt, ``"{\n  \"origin\": \"138.16.128.0\"\n}\n"``
+
+//     let m: HashMap<String, Value> = serde_json::from_str( &resp_txt ).unwrap(); // yields: m, ``{
+//                                                                                 //     "origin": String(
+//                                                                                 //         "138.16.128.0",
+//                                                                                 //     ),
+//                                                                                 // }``
+//     println!( "m, ``{:#?}``", m );
+
+//     "foo".to_string()
+// }
+
+// -- end temp experimentation -- works
 
 
 #[derive(Debug)]
@@ -198,7 +270,7 @@ pub struct InfoHelper {
 
 impl InfoHelper {
     pub async fn print_elapsed() {
-        use rocket::tokio::time::{sleep, Duration, Instant};
+
 
         let start = Instant::now();
         // let zz: () = start;  // yields: found struct `std::time::Instant`
@@ -250,41 +322,53 @@ mod tests {
     }
 
     #[rocket::async_test]
-    async fn test_simple_api_call_example() {
-        let test_url: String = "https://httpbin.org/ip".to_string();
-        let rslt_try: Result< HashMap<String, String>, Box<dyn std::error::Error> > = simple_api_call_example( &test_url ).await;
-        // let z: () = rslt_try;  // yields: found enum `Result`
-        match rslt_try {
-            Ok(_) => {
-                println!( "all ok!" );
-            },
-            Err(_err) => {
-                println!( "the error, ``{:?}``", _err );
-                std::process::exit(-1);
-            }
-        };
-        println!( "rslt_try, ``{:?}``", rslt_try );
-        let output_map: HashMap<String, String> = rslt_try.unwrap();  // this is ok because any error is handled above
-        // let zz: () = output_map;  // yields: found struct `std::collections::HashMap`
-        println!( "output_map, ``{:?}``", output_map );
-        let tst = output_map.contains_key("foo");
-        // let z: () = tst;  // yields: found `bool`
-        assert_eq!( output_map.contains_key("foo"), false );
-        assert_eq!( output_map.contains_key("origin"), true );
+    async fn test_hit_alma_api() {
+        let test_url_try: Result<String, VarError> = env::var("BIB_REDIRECT_TEST__ALMA_API_FULL_URL");
+        let test_url: String = test_url_try.unwrap();
+        println!( "test_url, ``{:?}``", test_url );
+        let redirector = RedirectHelper::new( "foo" ).await;
+        println!("redirector instantiated" );
+        let api_rslt = redirector.hit_alma_api( &test_url ).await;
+        println!( "api_rslt, ``{:?}``", api_rslt );
+        assert_eq!( 2, 3 );
     }
 
+    // -- development testing (works)
+
     // #[rocket::async_test]
-    // async fn test_hit_alma_api() {
-    //     let test_url_try: Result<String, VarError> = env::var("BIB_REDIRECT_TEST__ALMA_API_FULL_URL");
-    //     let test_url: String = test_url_try.unwrap();
-    //     println!( "test_url, ``{:?}``", test_url );
-    //     let redirector = RedirectHelper::new( "foo" ).await;
-    //     println!("redirector instantiated" );
-    //     let updated_bib_try: Result< (), Box<dyn std::error::Error> > = redirector.hit_alma_api(&test_url).await;
-    //     let updated_bib = updated_bib_try.unwrap();
-    //     // let zz: () = updated_bib;
+    // async fn test_simple_api_call_example() {
+    //     let test_url: String = "https://httpbin.org/ip".to_string();
+    //     let rslt_try: Result< HashMap<String, String>, Box<dyn std::error::Error> > = simple_api_call_example( &test_url ).await;
+    //     // let z: () = rslt_try;  // yields: found enum `Result`
+    //     match rslt_try {
+    //         Ok(_) => {
+    //             println!( "all ok!" );
+    //         },
+    //         Err(_err) => {
+    //             println!( "the error, ``{:?}``", _err );
+    //             std::process::exit(-1);
+    //         }
+    //     };
+    //     println!( "rslt_try, ``{:?}``", rslt_try );
+    //     let output_map: HashMap<String, String> = rslt_try.unwrap();  // this is ok because any error is handled above
+    //     // let zz: () = output_map;  // yields: found struct `std::collections::HashMap`
+    //     println!( "output_map, ``{:?}``", output_map );
+    //     let tst = output_map.contains_key("foo");
+    //     // let z: () = tst;  // yields: found `bool`
+    //     assert_eq!( output_map.contains_key("foo"), false );
+    //     assert_eq!( output_map.contains_key("origin"), true );
+    // }
+
+    // #[rocket::async_test]
+    // async fn test_simple_api_call_unknown_json_format_example() {
+    //     let test_url: String = "https://httpbin.org/ip".to_string();
+    //     let rslt_try: String = simple_api_call_unknown_json_format_example( &test_url ).await;
+    //     // let z: () = rslt_try;  // yields: found enum `Result`
+    //     println!( "rslt_try, ``{:?}``", rslt_try );
     //     assert_eq!( 2, 3 );
     // }
+
+    // -- end development testing
 
 }
 
