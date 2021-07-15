@@ -122,6 +122,7 @@ impl RedirectHelper {
         let resp_json: HashMap<String, Value> = serde_json::from_str( &resp_text ).unwrap();
         println!( "resp_json, {:?}", resp_json );
         println!( "\n---\nabout to run loop..." );
+        let mut mms_id: String = "init".to_string();
         for ( key, value ) in resp_json {
             println!( "key, {:?}", key );
             println!( "value, {:?}", value);
@@ -129,7 +130,7 @@ impl RedirectHelper {
                 println!( "found bib key -- pay attention! ");
                 let target_array = value.get(0).unwrap(); // gets an array of dict-entries from the Object wrapper
                 println!( "target_array, ``{:?}``", target_array );
-                let mms_id: String = target_array.get("mms_id").unwrap().to_string();
+                mms_id = target_array.get("mms_id").unwrap().to_string();
                 println!( "mms_id, ``{:?}``", mms_id );
                 // for entry in value {
                 //     println!( "entry, {:?}", entry );
@@ -139,7 +140,7 @@ impl RedirectHelper {
             }
         }
 
-        "foo".to_string()
+        mms_id
     }
 
 
@@ -332,7 +333,7 @@ mod tests {
         println!("redirector instantiated" );
         let api_rslt = redirector.hit_alma_api( &test_url ).await;
         println!( "api_rslt, ``{:?}``", api_rslt );
-        assert_eq!( 2, 3 );
+        assert_eq!( "991014294239706966".to_string(), api_rslt );
     }
 
     // -- development testing (works)
