@@ -99,14 +99,14 @@ impl RedirectHelper {
     pub async fn hit_alma_api( &self, api_url: &str ) -> String {
         println!( "starting hit_alma_api()" );
         println!( "api_url, ``{:?}``", api_url );
-
+        /* instantiate client
+           (consider _not_ doing this because only one request needs to be made) */
         let client: reqwest::Client = reqwest::Client::builder()
-            .timeout( rocket::tokio::time::Duration::from_millis(1000) )
-            .timeout( Duration::from_secs(10) )
+            .timeout( Duration::from_secs(5) )
             .build()
             .unwrap();  // <https://dev.to/pintuch/rust-reqwest-examples-10ff>
         println!("client instantiated");
-
+        /* request data */
         println!("about to get resp");
         let resp_text: String = client
             .get( api_url )
@@ -118,36 +118,16 @@ impl RedirectHelper {
             .await
             .unwrap();
         println!( "resp_text, ``{:?}``", resp_text );
-
-
-        // let resp_json: HashMap<String, HashMap<String,Value>> = serde_json::from_str( &resp_text ).unwrap();
-        // println!( "resp_json, {:?}", resp_json );
-
-        // println!( "\n---\nabout to run loop..." );
-        // for ( key, value ) in resp_json {
-        //     println!( "key, {:?}", key );
-        //     println!( "value, {:?}", value);
-        //     if key == "bib" {
-        //         for (inner_key, inner_value) in value {
-        //             println!( "- inner_key, ``{:?}``", inner_key );
-        //             println!( "- inner_value, ``{:?}``", inner_value );
-        //         }
-
-        //     }
-        // }
-
-
+        /* process json */
         let resp_json: HashMap<String, Value> = serde_json::from_str( &resp_text ).unwrap();
         println!( "resp_json, {:?}", resp_json );
-
         println!( "\n---\nabout to run loop..." );
         for ( key, value ) in resp_json {
             println!( "key, {:?}", key );
             println!( "value, {:?}", value);
-            // let zz: () = value;  // yields: found enum `serde_json::Value`
             if key == "bib" {
-                println!( "\nok -- pay attention! ");
-                let target_array = value.get(0).unwrap();
+                println!( "found bib key -- pay attention! ");
+                let target_array = value.get(0).unwrap(); // gets an array of dict-entries from the Object wrapper
                 println!( "target_array, ``{:?}``", target_array );
                 let mms_id: String = target_array.get("mms_id").unwrap().to_string();
                 println!( "mms_id, ``{:?}``", mms_id );
