@@ -32,22 +32,18 @@ async fn tester(bib: String) -> Redirect {
     println!( "api-url, ``{:?}``", url );
 
     // -- hit api
-    // let data = redirector.hit_alma_api( &url ).await;
-    // match data {
-    //     Ok(_) => {},
-    //     Err(_err) => {
-    //         // println!("problem hitting alma-api; quitting");
-    //         println!( "problem hitting alma-api, ``{:?}``; quitting", _err);
-    //         std::process::exit(-1);
-    //     }
-    // };
-
+    let mms_id: String = redirector.hit_alma_api( &url ).await;
+    println!( "mms_id, ``{:?}``", mms_id );
 
     // -- build redirect url
+    let redirect_url_template: String = "https://brown.primo.exlibrisgroup.com/discovery/fulldisplay?docid=almaTHE_MMS_ID&context=L&vid=01BU_INST:BROWN".to_string();
+    let redirect_url: String = str::replace( &redirect_url_template, "THE_MMS_ID", &mms_id );
+    println!( "redirect_url, ``{:?}``", redirect_url );
 
     // -- redirect
-    // Redirect::moved(uri!( "https://www.google.com/" ))
-    Redirect::temporary(uri!( "https://www.google.com/" )) // useful for testing, so browser doesn't cache it
+    // Redirect::moved( uri!( "https://www.google.com/" ) )  // works
+    // Redirect::temporary( uri!( "https://www.google.com/" ) )  // works
+    Redirect::temporary( redirect_url )
 
 }
 

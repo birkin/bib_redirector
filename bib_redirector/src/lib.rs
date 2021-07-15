@@ -132,14 +132,11 @@ impl RedirectHelper {
                 println!( "target_array, ``{:?}``", target_array );
                 mms_id = target_array.get("mms_id").unwrap().to_string();
                 println!( "mms_id, ``{:?}``", mms_id );
-                // for entry in value {
-                //     println!( "entry, {:?}", entry );
-                // }
             } else {
                 println!( "\nno, bib not yet found" );
             }
         }
-
+        mms_id = str::replace( &mms_id, '"', "" );
         mms_id
     }
 
@@ -278,7 +275,7 @@ impl InfoHelper {
         let start = Instant::now();
         // let zz: () = start;  // yields: found struct `std::time::Instant`
 
-        sleep(Duration::from_secs(1)).await;        // original line 2
+        // sleep(Duration::from_secs(1)).await;        // original line 2
 
         let elapsed: Duration = start.elapsed();
         // let zz: () = elapsed;  // yields: found struct `Duration`
