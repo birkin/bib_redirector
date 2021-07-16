@@ -16,7 +16,7 @@ async fn root() -> &'static str {
 
 
 #[get("/bib_redirect_tester/<bib>")]
-async fn tester(bib: String) -> Redirect {
+async fn rdrctr(bib: String) -> Redirect {
 
     // -- setup
     println!( "perceived bibnum, ``{:?}``", bib);
@@ -25,7 +25,9 @@ async fn tester(bib: String) -> Redirect {
 
     // -- validate bib
     // let ok: bool = redirector.validate_bib( &bib ).await;
-
+    // if ok != true {
+    //     panic!( "bad_bib" );
+    // }
 
     // -- add check-digit
     let updated_bib: String = redirector.add_check_digit( &bib ).await;
@@ -81,7 +83,7 @@ async fn misc() -> &'static str {
 fn rocket() -> _ {
     rocket::build()
         .mount("/", routes![root])
-        .mount("/", routes![tester])
+        .mount("/", routes![rdrctr])
         .mount("/", routes![info])
         .mount("/", routes![misc])
 }
