@@ -23,6 +23,10 @@ async fn tester(bib: String) -> Redirect {
     let redirector = RedirectHelper::new( &bib ).await;
     print!("alma-api-url, ``{:?}``", redirector.alma_api_url);
 
+    // -- validate bib
+    // let ok: bool = redirector.validate_bib( &bib ).await;
+
+
     // -- add check-digit
     let updated_bib: String = redirector.add_check_digit( &bib ).await;
     println!( "updated_bibnum, ``{:?}``", updated_bib );
@@ -40,7 +44,7 @@ async fn tester(bib: String) -> Redirect {
     let redirect_url: String = str::replace( &redirect_url_template, "THE_MMS_ID", &mms_id );
     println!( "redirect_url, ``{:?}``", redirect_url );
 
-    // -- redirect
+    // -- happy path redirect
     // Redirect::moved( uri!( "https://www.google.com/" ) )  // works
     // Redirect::temporary( uri!( "https://www.google.com/" ) )  // works
     Redirect::temporary( redirect_url )
