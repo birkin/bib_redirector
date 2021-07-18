@@ -77,6 +77,7 @@ name = "bib_redirector"
 version = "0.1.0"
 dependencies = [
  "openssl",
+ "rand",
  "reqwest",
  "rocket",
  "serde",

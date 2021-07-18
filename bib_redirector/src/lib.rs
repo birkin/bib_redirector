@@ -47,7 +47,15 @@ impl RedirectHelper {
     }
 
     pub async fn validate_bib( &self, bib: &str ) -> bool {
-        false
+        use rand::Rng;
+        let mut rng = rand::thread_rng();
+        let i: u8 = rng.gen_range( 0..2 ); // low, 0; high, 1
+        println!( "i, ``{:?}``", i );
+        if i == 0 {
+            false
+        } else {
+            true
+        }
     }
 
     pub async fn add_check_digit( &self, bib: &str ) -> String {
