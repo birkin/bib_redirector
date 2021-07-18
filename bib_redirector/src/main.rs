@@ -56,44 +56,29 @@ async fn rdrctr(bib: String) -> Result< Redirect, &'static str > {
     if is_valid == false {
         Err( "bad_bib" )
     } else {
-        Ok( Redirect::temporary(uri!( "https://www.google.com/")) )
-    }
 
+        // -- add check-digit
+        let updated_bib: String = redirector.add_check_digit( &bib ).await;
+        println!( "updated_bibnum, ``{:?}``", updated_bib );
 
-    // #[get("/redir/<name>")]
-    // fn maybe_redir(name: &str) -> Result<&'static str, Redirect> {
-    //     match name {
-    //         "Sergio" => Ok("Hello, Sergio!"),
-    //         _ => Err(Redirect::to(uri!(redir_login))),
-    //     }
-    // }
+        // -- build api-url
+        let url: String = redirector.build_api_url( &updated_bib ).await;
+        println!( "api-url, ``{:?}``", url );
 
+        // -- hit api
+        let mms_id: String = redirector.hit_alma_api( &url ).await;
+        println!( "mms_id, ``{:?}``", mms_id );
 
-    // -- add check-digit
-    // let updated_bib: String = redirector.add_check_digit( &bib ).await;
-    // println!( "updated_bibnum, ``{:?}``", updated_bib );
+        // -- build redirect url
+        let redirect_url_template: String = "https://brown.primo.exlibrisgroup.com/discovery/fulldisplay?docid=almaTHE_MMS_ID&context=L&vid=01BU_INST:BROWN".to_string();
+        let redirect_url: String = str::replace( &redirect_url_template, "THE_MMS_ID", &mms_id );
+        println!( "redirect_url, ``{:?}``", redirect_url );
 
-    // // -- build api-url
-    // let url: String = redirector.build_api_url( &updated_bib ).await;
-    // println!( "api-url, ``{:?}``", url );
+        // -- happy path redirect
+        // Ok( Redirect::moved(redirect_url) )
+        Ok( Redirect::temporary(redirect_url) )  // temporary; prevents browser from caching the redirect
 
-    // // -- hit api
-    // let mms_id: String = redirector.hit_alma_api( &url ).await;
-    // println!( "mms_id, ``{:?}``", mms_id );
-
-    // // -- build redirect url
-    // let redirect_url_template: String = "https://brown.primo.exlibrisgroup.com/discovery/fulldisplay?docid=almaTHE_MMS_ID&context=L&vid=01BU_INST:BROWN".to_string();
-    // let redirect_url: String = str::replace( &redirect_url_template, "THE_MMS_ID", &mms_id );
-    // println!( "redirect_url, ``{:?}``", redirect_url );
-
-    // -- happy path redirect
-    // Redirect::moved( uri!( "https://www.google.com/" ) )  // works
-    // Redirect::temporary( uri!( "https://www.google.com/" ) )  // works
-
-    // Ok( Redirect::temporary( redirect_url ) )
-    // ResponseOrRedirect::Rdrct(Redirect::temporary( redirect_url ))
-
-    // Redirect::temporary( redirect_url )
+    } // end of is_valid
 
 }
 
