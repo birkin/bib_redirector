@@ -1,10 +1,5 @@
-// use rocket::serde;
-// use rocket::tokio::time::{sleep, Duration, Instant};
-// use serde;
-// use std::collections::HashMap;
-// use std::error::Error;
 use regex::Regex;
-use rocket::tokio::time::{Duration, Instant};
+use rocket::tokio::time::{sleep, Duration, Instant};
 use serde_json::value::Value;
 use std::collections::HashMap;
 use std::env::VarError;
@@ -59,7 +54,10 @@ impl RedirectHelper {
     }
 
     pub async fn add_check_digit( &self, bib: &str ) -> String {
-        // -- note, this code assumes ascii strings, see <https://doc.rust-lang.org/book/ch08-02-strings.html#bytes-and-scalar-values-and-grapheme-clusters-oh-my> for why that's important
+        /*  Note, this code assumes ascii strings, which is fine for this use-case (the bib has already been validated).
+            See <https://doc.rust-lang.org/book/ch08-02-strings.html#bytes-and-scalar-values-and-grapheme-clusters-oh-my>
+                ...for why it's important not to incorrectly make that assumption.
+         */
         println!( "incoming bib, ``{:?}``", bib );
         let initial_bib: String = bib.to_string();
         // -- remove `b`
@@ -109,6 +107,8 @@ impl RedirectHelper {
     }
 
     pub async fn build_api_url( &self, updated_bib: &str ) -> String {
+        /*  Replaces stubbed text in the url template with the envar api-key, and incoming bib.
+         */
         let url_with_key: String = str::replace( &self.alma_api_url_template, "THE_API_KEY", &self.api_key );
         let api_url: String = str::replace( &url_with_key, "THE_BIB", &updated_bib );
         println!( "api_url, ``{:?}``", api_url );
@@ -116,6 +116,13 @@ impl RedirectHelper {
     }
 
     pub async fn hit_alma_api( &self, api_url: &str ) -> String {
+        /*  - Hits alma-api.
+            - Loads response as json.
+            - Pulls out and returns mms_id.
+            Possible TODOs:
+            - Add 'unwrap_or_else()' syntax both for my learning and for better error-messages.
+            - Create json-object in separate step.
+         */
         println!( "starting hit_alma_api()" );
         println!( "api_url, ``{:?}``", api_url );
         /* instantiate client
@@ -155,7 +162,7 @@ impl RedirectHelper {
                 println!( "\nno, bib not yet found" );
             }
         }
-        mms_id = str::replace( &mms_id, '"', "" );
+        mms_id = str::replace( &mms_id, '"', "" );  // this seems weird -- is there another way I should be accessing this value?
         mms_id
     }
 
@@ -171,12 +178,10 @@ impl InfoHelper {
     pub async fn print_elapsed() {
 
         let start = Instant::now();
-        // let zz: () = start;  // yields: found struct `std::time::Instant`
 
-        // sleep(Duration::from_secs(1)).await;        // original line 2
+        sleep( Duration::from_millis(250) ).await;
 
         let elapsed: Duration = start.elapsed();
-        // let zz: () = elapsed;  // yields: found struct `Duration`
 
         println!( "elapsed time, `{:?}`", elapsed );
     }
@@ -191,7 +196,7 @@ mod tests {
 
     // -- misc ----------------------------------
 
-    // #[test]
+    // #[test]  // leaving this in here to remind myself of how a non-async test works
     // fn test_it_works() {
     //     assert_eq!(2 + 2, 4);
     // }

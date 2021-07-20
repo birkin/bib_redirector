@@ -11,36 +11,18 @@ use rocket::tokio::time::{Duration, Instant};
 
 #[get("/")]
 async fn root() -> &'static str {
+    /*  Mini early example of just returning a response.
+     */
     "coming: root-response redirect to /info"
 }
 
 
-
-// enum TypeOr<S, T> {
-//     Left(S),
-//     Right(T),
-// }
-
-
-// enum StrOrStrAndVec<'a> {
-//     Str(&'a str),
-//     StrAndVec(&'a str, Vec<usize>),
-// }
-
-// fn f3(flag: bool) -> StrOrStrAndVec<'static> {
-//     if flag {
-//         StrOrStrAndVec::StrAndVec("abc", vec![0, 1, 2])
-//     } else {
-//         StrOrStrAndVec::Str("abc")
-//     }
-// }
-
-
 #[get("/bib_redirect_tester/<bib>")]
-// async fn rdrctr(bib: String) -> Redirect {
-// async fn rdrctr(bib: String) -> ResponseOrRedirect<'static> {
-// async fn rdrctr(bib: String) -> Result<&'static str, Redirect> {
 async fn rdrctr(bib: String) -> Result< Redirect, &'static str > {
+    /*  Happy-path will return a Redirect to the equivalent Primo bib-record (mms_id);
+        Error will return for now, a message like "bad_bib".
+        TODO: flow the error-string through a template, which may require changing the Error return-signature.
+     */
 
     // -- setup
     println!( "perceived bibnum, ``{:?}``", bib);
@@ -54,7 +36,7 @@ async fn rdrctr(bib: String) -> Result< Redirect, &'static str > {
     let is_valid: bool = redirector.validate_bib( &bib ).await;
     println!( "is_valid, ``{:?}``", is_valid );
     if is_valid == false {
-        Err( "bad_bib" )
+        Err( "bad_bib" )  // reminder to future self: without the ending `;`, this is the return-value.
     } else {
 
         // -- add check-digit
@@ -76,7 +58,7 @@ async fn rdrctr(bib: String) -> Result< Redirect, &'static str > {
 
         // -- happy path redirect
         // Ok( Redirect::moved(redirect_url) )
-        Ok( Redirect::temporary(redirect_url) )  // temporary; prevents browser from caching the redirect
+        Ok( Redirect::temporary(redirect_url) )  // `temporary`: prevents browser from caching the redirect
 
     } // end of is_valid
 
@@ -85,26 +67,22 @@ async fn rdrctr(bib: String) -> Result< Redirect, &'static str > {
 
 #[get("/info")]
 async fn info() -> &'static str {
-
+    /*  Mini early example of loading handler code from a different file (lib.rs).
+     */
     InfoHelper::print_elapsed().await;
-
     println!( "lib function call done" );
-
     let resp: &str = "coming: info-response";
-
     resp
-
 }
 
 
 #[get("/misc")]
 async fn misc() -> &'static str {
-
+    /*  Mini early example of coding before response.
+     */
     let start = Instant::now();
     let elapsed: Duration = start.elapsed();
-
     println!( "elapsed time;, `{:?}`; about to redirect", elapsed );
-
     "coming: misc-response"
 }
 
