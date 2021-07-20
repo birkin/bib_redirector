@@ -1,48 +1,45 @@
 Info
 ====
 
-This [rust app](https://www.rust-lang.org) will...
+### This [rust](https://www.rust-lang.org) web-app is intended...
 
-- parse the bib out of the incoming url
-- run an alma-api lookup to get the alma-id
-- build a primo redirect url
-- redirect the user to that url
+- to continue my exploration of rust
+- to explore the [Rocket web-framework](https://rocket.rs)
+- to explore coding async-first
+- to explore rust/async testing
 
-yay!
+### Functionally, it...
+
+- parses the bib out of the incoming url
+- validates the bib
+- runs an alma-api lookup to get the alma mms_id
+- builds a primo redirect url
+- redirects the user to that url
+
+This all works now. (yay!)
+
+### Notes...
+
+- Our actual implementation-solution will likely be in php or python -- opening a webserver that we have little knowledge of to the world might not be a great idea!
+- K.H. had a cool idea... perhaps obviate all this by simply taking the incoming bib and, if possible, turning it into a Primo search? That, too, would avoid hitting the alma-api.
 
 ---
----
+
 
 Next
 ====
 
-- implement regex for the validate-bib check, with tests.
+- see if there's an easy way to implement a route with the same pattern, but bib_tester/info -- that'd get picked up before the bib-num pattern. A lightweight endpoint like this would allow experimenting with ab load-testing.
 
-- see if there's an easy way to implement a route with the same pattern, but bib_tester/info -- that'd get picked up before the bib-num pattern.
+- look into returning a templated response.
 
----
----
+- switch any simple unwrap() calls to unwrap_or_else() for my own edification -- to better understand the kinds of error-conditions that can exist.
 
+- explore caching.
 
-Misc
-====
+- explore saving api lookups into an sqlite db.
 
-Since this'll be replaced, archiving here my first rust randomization code...
-
-```
-    pub async fn validate_bib( &self, bib: &str ) -> bool {
-        use rand::Rng;
-        let mut rng = rand::thread_rng();
-        let i: u8 = rng.gen_range( 0..2 ); // low, 0; high, 1
-        println!( "i, ``{:?}``", i );
-        if i == 0 {
-            false
-        } else {
-            true
-        }
-    }
-```
-
+- look into how I might embed the curret git-commit-version into the compilation process, for my usual webapp version url-response.
 
 ---
----
+
