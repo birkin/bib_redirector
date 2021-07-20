@@ -3,6 +3,7 @@
 // use serde;
 // use std::collections::HashMap;
 // use std::error::Error;
+use regex::Regex;
 use rocket::tokio::time::{Duration, Instant};
 use serde_json::value::Value;
 use std::collections::HashMap;
@@ -47,15 +48,14 @@ impl RedirectHelper {
     }
 
     pub async fn validate_bib( &self, bib: &str ) -> bool {
-        use rand::Rng;
-        let mut rng = rand::thread_rng();
-        let i: u8 = rng.gen_range( 0..2 ); // low, 0; high, 1
-        println!( "i, ``{:?}``", i );
-        if i == 0 {
-            false
-        } else {
-            true
-        }
+        let re = Regex::new(r"^b\d{7}$").unwrap_or_else(
+            |error| {
+                panic!( "unable to create regex-object; error: ``{:?}``", error);
+            }
+        );
+        let match_result: bool = re.is_match( bib );
+        println!( "match_result, ``{:?}``", match_result );
+        match_result
     }
 
     pub async fn add_check_digit( &self, bib: &str ) -> String {
@@ -189,6 +189,8 @@ impl InfoHelper {
 mod tests {
     use super::*;  // gives access to RedirectHelper struct
 
+    // -- misc ----------------------------------
+
     // #[test]
     // fn test_it_works() {
     //     assert_eq!(2 + 2, 4);
@@ -200,16 +202,30 @@ mod tests {
         assert_eq!( "b1234567".to_string(), redirector.perceived_bib );
     }
 
-
+    // -- validate bib() ------------------------
 
     #[rocket::async_test]
     async fn test_validate_bib_good() {
-        let redirector = RedirectHelper::new( "b1049798" ).await;
+        let redirector = RedirectHelper::new( "b1234567" ).await;
         let is_valid: bool = redirector.validate_bib( &redirector.perceived_bib ).await;
         assert_eq!( true, is_valid );
     }
 
+    #[rocket::async_test]
+    async fn test_validate_bib_bad() {
+        let redirector = RedirectHelper::new( "foo" ).await;
+        let is_valid: bool = redirector.validate_bib( &redirector.perceived_bib ).await;
+        assert_eq!( false, is_valid );
+    }
 
+    #[rocket::async_test]
+    async fn test_validate_bib_bad_too_long() {
+        let redirector = RedirectHelper::new( "b12345678" ).await;
+        let is_valid: bool = redirector.validate_bib( &redirector.perceived_bib ).await;
+        assert_eq!( false, is_valid );
+    }
+
+    // -- add_check_digit() ---------------------
 
     #[rocket::async_test]
     async fn test_add_check_digit_regular() {
@@ -232,6 +248,8 @@ mod tests {
         assert_eq!( "bad_size".to_string(), updated_bib );
     }
 
+    // -- misc ----------------------------------
+
     #[rocket::async_test]
     async fn test_hit_alma_api() {
         let test_url_try: Result<String, VarError> = env::var("BIB_REDIRECT_TEST__ALMA_API_FULL_URL");
@@ -243,19 +261,5 @@ mod tests {
         println!( "api_rslt, ``{:?}``", api_rslt );
         assert_eq!( "991014294239706966".to_string(), api_rslt );
     }
-
-    // // -- end development testing
-
-    // #[rocket::async_test]
-    // async fn test_hit_alma_api() {
-    //     let test_url_try: Result<String, VarError> = env::var("BIB_REDIRECT_TEST__ALMA_API_FULL_URL");
-    //     let test_url: String = test_url_try.unwrap();
-    //     println!( "test_url, ``{:?}``", test_url );
-    //     let redirector = RedirectHelper::new( "foo" ).await;
-    //     println!("redirector instantiated" );
-    //     let api_rslt = redirector.hit_alma_api( &test_url ).await;
-    //     println!( "api_rslt, ``{:?}``", api_rslt );
-    //     assert_eq!( "991014294239706966".to_string(), api_rslt );
-    // }
 
 }
