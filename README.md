@@ -13,18 +13,36 @@ yay!
 ---
 ---
 
-next:
-- try the simple-test again trying to load the json into an unknwown structure, like:
+Next
+====
 
-    `let value: serde_json::Value = serde_json::from_str(j).unwrap();`
+- implement regex for the validate-bib check, with tests.
 
-    ...as seen here: <https://github.com/serde-rs/json/issues/144>
+- see if there's an easy way to implement a route with the same pattern, but bib_tester/info -- that'd get picked up before the bib-num pattern.
 
-    - also interesting: <https://stackoverflow.com/questions/58233949/how-can-i-use-serde-json-on-a-json-object-with-variable-key-names>
+---
+---
 
-    - also see: <https://blog.logrocket.com/json-and-rust-why-serde_json-is-the-top-choice/>
 
-        - specifically the section "Working without types"
+Misc
+====
+
+Since this'll be replaced, archiving here my first rust randomization code...
+
+```
+    pub async fn validate_bib( &self, bib: &str ) -> bool {
+        use rand::Rng;
+        let mut rng = rand::thread_rng();
+        let i: u8 = rng.gen_range( 0..2 ); // low, 0; high, 1
+        println!( "i, ``{:?}``", i );
+        if i == 0 {
+            false
+        } else {
+            true
+        }
+    }
+```
+
 
 ---
 ---

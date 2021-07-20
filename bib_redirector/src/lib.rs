@@ -200,6 +200,17 @@ mod tests {
         assert_eq!( "b1234567".to_string(), redirector.perceived_bib );
     }
 
+
+
+    #[rocket::async_test]
+    async fn test_validate_bib_good() {
+        let redirector = RedirectHelper::new( "b1049798" ).await;
+        let is_valid: bool = redirector.validate_bib( &redirector.perceived_bib ).await;
+        assert_eq!( true, is_valid );
+    }
+
+
+
     #[rocket::async_test]
     async fn test_add_check_digit_regular() {
         let redirector = RedirectHelper::new( "b1049798" ).await;
@@ -233,18 +244,18 @@ mod tests {
         assert_eq!( "991014294239706966".to_string(), api_rslt );
     }
 
-    // -- end development testing
+    // // -- end development testing
 
-    #[rocket::async_test]
-    async fn test_hit_alma_api() {
-        let test_url_try: Result<String, VarError> = env::var("BIB_REDIRECT_TEST__ALMA_API_FULL_URL");
-        let test_url: String = test_url_try.unwrap();
-        println!( "test_url, ``{:?}``", test_url );
-        let redirector = RedirectHelper::new( "foo" ).await;
-        println!("redirector instantiated" );
-        let api_rslt = redirector.hit_alma_api( &test_url ).await;
-        println!( "api_rslt, ``{:?}``", api_rslt );
-        assert_eq!( "991014294239706966".to_string(), api_rslt );
-    }
+    // #[rocket::async_test]
+    // async fn test_hit_alma_api() {
+    //     let test_url_try: Result<String, VarError> = env::var("BIB_REDIRECT_TEST__ALMA_API_FULL_URL");
+    //     let test_url: String = test_url_try.unwrap();
+    //     println!( "test_url, ``{:?}``", test_url );
+    //     let redirector = RedirectHelper::new( "foo" ).await;
+    //     println!("redirector instantiated" );
+    //     let api_rslt = redirector.hit_alma_api( &test_url ).await;
+    //     println!( "api_rslt, ``{:?}``", api_rslt );
+    //     assert_eq!( "991014294239706966".to_string(), api_rslt );
+    // }
 
 }
