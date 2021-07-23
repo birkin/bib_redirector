@@ -17,6 +17,21 @@ async fn root() -> &'static str {
 }
 
 
+#[get("/bib_redirect_tester/load_testing")]
+async fn ld_tstng() -> String {
+    /*  Mini early example of loading handler code from a different file (lib.rs).
+     */
+
+    // "coming: load-testing response"  // works with correct signature
+
+    // let resp: String = "string_response".to_string();  // works with correct signature
+
+    let resp: String = InfoHelper::return_elapsed().await;
+
+    resp
+}
+
+
 #[get("/bib_redirect_tester/<bib>")]
 async fn rdrctr(bib: String) -> Result< Redirect, &'static str > {
     /*  Happy-path will return a Redirect to the equivalent Primo bib-record (mms_id);
@@ -92,6 +107,7 @@ async fn misc() -> &'static str {
 fn rocket() -> _ {
     rocket::build()
         .mount("/", routes![root])
+        .mount("/", routes![ld_tstng])
         .mount("/", routes![rdrctr])
         .mount("/", routes![info])
         .mount("/", routes![misc])
