@@ -20,8 +20,7 @@ This all works now. (yay!)
 
 ### Notes...
 
-- Our actual implementation-solution will likely be in php or python -- opening a webserver that we have little knowledge of to the world might not be a great idea!
-- K.H. had a cool idea... perhaps obviate all this by simply taking the incoming bib and, if possible, turning it into a Primo search? That, too, would avoid hitting the alma-api.
+- Our actual implementation-solution will likely be in php or python.
 
 ---
 
@@ -29,7 +28,7 @@ This all works now. (yay!)
 Next
 ====
 
-- see if there's an easy way to implement a route with the same pattern, but bib_tester/info -- that'd get picked up before the bib-num pattern. A lightweight endpoint like this would allow experimenting with ab load-testing.
+- √ see if there's an easy way to implement a route with the same pattern, but bib_tester/info -- that'd get picked up before the bib-num pattern. A lightweight endpoint like this would allow experimenting with ab load-testing.
 
 - look into returning a templated response.
 
