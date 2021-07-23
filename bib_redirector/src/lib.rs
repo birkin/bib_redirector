@@ -176,14 +176,21 @@ pub struct InfoHelper {
 
 impl InfoHelper {
     pub async fn print_elapsed() {
-
         let start = Instant::now();
-
         sleep( Duration::from_millis(250) ).await;
-
         let elapsed: Duration = start.elapsed();
-
         println!( "elapsed time, `{:?}`", elapsed );
+    }
+
+    pub async fn return_elapsed() -> String {
+        let start = Instant::now();
+        // sleep( Duration::from_millis(250) ).await;
+        let elapsed: Duration = start.elapsed();
+        let millis: u128 = elapsed.as_millis();
+        let micros: u128 = elapsed.as_micros();
+        let nanos: u128 = elapsed.as_nanos();
+        let display: String = format!( "that took: in milliseconds, ``{}``; or in microseconds, ``{}``; or in nanoseconds, ``{}``", millis, micros, nanos) ;
+        display
     }
 }
 
