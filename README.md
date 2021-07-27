@@ -42,3 +42,8 @@ Next
 
 ---
 
+
+Resources
+=========
+
+- [post on Tera](https://blog.logrocket.com/top-3-templating-libraries-for-rust/)

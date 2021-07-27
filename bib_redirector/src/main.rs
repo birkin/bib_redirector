@@ -3,6 +3,7 @@
 use bib_redirector::InfoHelper;
 use bib_redirector::RedirectHelper;
 
+// use rocket_dyn_templates::{Template, tera::Tera, context};
 use rocket::response::Redirect;
 use rocket::tokio::time::{Duration, Instant};
 
@@ -89,6 +90,30 @@ async fn info() -> &'static str {
     let resp: &str = "coming: info-response";
     resp
 }
+
+
+// #[get("/misc")]
+// async fn misc() -> Template {
+//     /*  Initial template test.
+//      */
+//     let start = Instant::now();
+//     let elapsed: Duration = start.elapsed();
+//     println!( "elapsed time;, `{:?}`; about to redirect", elapsed );
+
+//     Template::render( "misc_template", context! {
+//         elapsed: elapsed,
+//         foo: "bar"
+//     } )
+// }
+
+// #[get("/hello/<name>")]
+// pub fn hello(name: &str) -> Template {
+//     Template::render("tera/index", context! {
+//         title: "Hello",
+//         name: Some(name),
+//         items: vec!["One", "Two", "Three"],
+//     })
+// }
 
 
 #[get("/misc")]
