@@ -46,4 +46,6 @@ Next
 Resources
 =========
 
+- [tutorial](https://dev.to/davidedelpapa/rocket-tutorial-01-basics-4ph9)
+
 - [post on Tera](https://blog.logrocket.com/top-3-templating-libraries-for-rust/)

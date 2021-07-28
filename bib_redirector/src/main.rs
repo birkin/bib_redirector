@@ -7,6 +7,8 @@ use bib_redirector::RedirectHelper;
 use rocket::response::Redirect;
 use rocket::tokio::time::{Duration, Instant};
 
+// use rocket_dyn_templates::Template;
+
 // use rocket::tokio::time::{sleep, Duration, Instant};
 
 
@@ -100,7 +102,7 @@ async fn info() -> &'static str {
 //     let elapsed: Duration = start.elapsed();
 //     println!( "elapsed time;, `{:?}`; about to redirect", elapsed );
 
-//     Template::render( "misc_template", context! {
+//     Template::render( "tera_test", context! {
 //         elapsed: elapsed,
 //         foo: "bar"
 //     } )
@@ -136,4 +138,5 @@ fn rocket() -> _ {
         .mount("/", routes![rdrctr])
         .mount("/", routes![info])
         .mount("/", routes![misc])
+        // .attach( Template::fairing() )
 }

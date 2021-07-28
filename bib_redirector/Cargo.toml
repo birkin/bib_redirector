@@ -14,5 +14,13 @@ rocket = "0.5.0-rc.1"
 serde = "1"
 serde_json = "1"
 
-[dependencies.rocket_dyn_templates]
-features = ["tera"]
+#rocket_contrib = { version = "0.4.10", features = ["tera"] }
+
+#[dependencies.rocket_dyn_templates]
+#path = "../../contrib/dyn_templates"
+#features = ["tera"]
+
+#[dependencies.rocket_contrib]
+#version = "0.4.10"
+#default-features = false
+#features = ["tera"]
