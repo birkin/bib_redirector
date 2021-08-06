@@ -30,6 +30,8 @@ Next
 
 - √ see if there's an easy way to implement a route with the same pattern, but bib_tester/info -- that'd get picked up before the bib-num pattern. A lightweight endpoint like this would allow experimenting with ab load-testing.
 
+- convert print-statements to logging.
+
 - look into returning a templated response.
 
 - switch any simple unwrap() calls to unwrap_or_else() for my own edification -- to better understand the kinds of error-conditions that can exist.
@@ -49,3 +51,5 @@ Resources
 - [tutorial](https://dev.to/davidedelpapa/rocket-tutorial-01-basics-4ph9)
 
 - [post on Tera](https://blog.logrocket.com/top-3-templating-libraries-for-rust/)
+
+- [review mounting and logging](https://genekuo.medium.com/creating-a-rest-api-in-rust-with-persistence-rust-rocket-and-diesel-a4117d400104)
