@@ -1,7 +1,15 @@
 #[macro_use] extern crate rocket;
 
+// extern crate chrono;
+// extern crate env_logger;
+// extern crate log;
+
+// use chrono::{DateTime, Local};
+
 use bib_redirector::InfoHelper;
 use bib_redirector::RedirectHelper;
+
+// use env_logger::{Builder, Target};
 
 // use rocket_dyn_templates::{Template, tera::Tera, context};
 use rocket::response::Redirect;
@@ -10,6 +18,9 @@ use rocket::tokio::time::{Duration, Instant};
 // use rocket_dyn_templates::Template;
 
 // use rocket::tokio::time::{sleep, Duration, Instant};
+
+
+
 
 
 #[get("/")]
@@ -89,6 +100,9 @@ async fn info() -> &'static str {
      */
     InfoHelper::print_elapsed().await;
     println!( "lib function call done" );
+
+    // debug!( "{}", format!("debug entry") );
+
     let resp: &str = "coming: info-response";
     resp
 }
@@ -132,6 +146,19 @@ async fn misc() -> &'static str {
 
 #[launch]
 fn rocket() -> _ {
+
+    println!( "starting logging" );
+
+    /* setup logging */
+    // let mut log_builder = Builder::from_default_env();
+    // log_builder.target( Target::Stdout );
+    // log_builder.init();
+    // let local_time: DateTime<Local> = Local::now();
+    // info!( "{}", format!("\n\nstarting rust logging code at, ``{:?}``", local_time.to_rfc3339()) );
+    // debug!( "{}", format!("\n\nstarting rust logging code at, ``{:?}``", local_time.to_rfc3339()) );
+
+    println!( "starting rocket::build()" );
+
     rocket::build()
         .mount("/", routes![root])
         .mount("/", routes![ld_tstng])
