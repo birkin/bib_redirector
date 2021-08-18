@@ -1,8 +1,12 @@
 #[macro_use] extern crate rocket;
 
-// extern crate chrono;
+#[macro_use]
+extern crate log;
+
 // extern crate env_logger;
 // extern crate log;
+
+// extern crate chrono;
 
 // use chrono::{DateTime, Local};
 
@@ -138,14 +142,18 @@ async fn misc() -> &'static str {
      */
     let start = Instant::now();
     let elapsed: Duration = start.elapsed();
-    println!( "elapsed time;, `{:?}`; about to redirect", elapsed );
+    println!( "elapsed time;, ``{:?}``", elapsed );
+    info!( "info-level log message" );
+    debug!( "debug-level log message" );
     "coming: misc-response"
 }
 
 
-
 #[launch]
 fn rocket() -> _ {
+
+    env_logger::init();
+    info!( "starting up" );
 
     println!( "starting logging" );
 
